@@ -4,9 +4,9 @@ Demo cơ bản chỉ có 2 nhiệm vụ:
 1. Tóm tắt tài liệu học tập.
 2. Giải thích kiến thức bằng tiếng Việt dễ hiểu.
 
-Đây là **workspace mẫu dành cho OpenClaw**, không phải một ứng dụng AI độc lập. Dự án dùng agent và mô hình AI mà OpenClaw đã được cấu hình sẵn; không tạo web server hoặc API riêng.
+Đây là workspace mẫu cho OpenClaw, không phải ứng dụng AI độc lập. Cần cài OpenClaw và cấu hình một mô hình AI trước khi chạy.
 
-## Các tệp
+## Cấu trúc
 
 ```text
 studyclaw-mini/
@@ -14,78 +14,84 @@ studyclaw-mini/
 ├── SOUL.md
 ├── IDENTITY.md
 ├── README.md
+├── run-studyclaw.ps1
 └── skills/
-    ├── tom-tat-tai-lieu/
-    │   └── SKILL.md
-    └── giai-thich-kien-thuc/
-        └── SKILL.md
+    ├── tom-tat-tai-lieu/SKILL.md
+    └── giai-thich-kien-thuc/SKILL.md
 ```
 
-## Cách sử dụng
+## Cách chạy trên Windows
 
-### 1. Cần có OpenClaw đang hoạt động
+### Bước 1 — Cài OpenClaw
 
-Trong terminal, kiểm tra:
+Mở PowerShell và chạy lệnh cài đặt chính thức:
 
 ```powershell
-openclaw --version
-openclaw doctor
-openclaw agents list
+iwr -useb https://openclaw.ai/install.ps1 | iex
 ```
 
-Bạn cần hoàn tất cấu hình nhà cung cấp mô hình AI và Gateway theo hướng dẫn OpenClaw trước khi chạy agent.
+Làm theo các bước trên màn hình để hoàn tất onboarding và kết nối mô hình AI. Nếu lệnh `openclaw` chưa nhận diện sau khi cài, hãy đóng PowerShell rồi mở lại.
 
-### 2. Tạo agent StudyClaw
+Tài liệu chính thức: https://docs.openclaw.ai/install
 
-Clone repository của bạn nếu chưa có trên máy:
+### Bước 2 — Tải repository về máy
+
+Nếu chưa tải repository, chạy:
 
 ```powershell
 git clone https://github.com/duymanhlol1222002-maker/openclaw.git
 cd openclaw
 ```
 
-Sau đó tạo agent với workspace mẫu. Ví dụ nếu repository được clone vào `C:\Users\YourName\openclaw`, chạy:
+Nếu máy chưa có Git, tải ZIP của repository từ GitHub và giải nén thay vì dùng lệnh `git clone`.
+
+### Bước 3 — Chạy StudyClaw
+
+Trong PowerShell, chuyển đến thư mục repository vừa tải:
 
 ```powershell
-openclaw agents add studyclaw --workspace "C:\Users\YourName\openclaw\studyclaw-mini"
+cd "$HOME\openclaw\studyclaw-mini"
 ```
 
-Thay đường dẫn ví dụ bằng đường dẫn thực tế của bạn. Nếu agent `studyclaw` đã tồn tại, không chạy lệnh tạo lại; hãy kiểm tra `openclaw agents list` và cấu hình workspace hiện có.
-
-### 3. Kiểm tra agent
+Nếu bạn đã lưu repository ở vị trí khác, hãy thay đường dẫn bằng vị trí thực tế. Sau đó chạy:
 
 ```powershell
-openclaw agents list
+Set-ExecutionPolicy -Scope Process Bypass
+.\run-studyclaw.ps1
+```
+
+Script sẽ kiểm tra OpenClaw, tạo agent `studyclaw` nếu chưa có, rồi gửi một câu hỏi thử. Quyền thực thi chỉ được thay đổi trong cửa sổ PowerShell hiện tại.
+
+### Nếu muốn chạy từng lệnh thủ công
+
+Mở PowerShell tại thư mục repository rồi chạy:
+
+```powershell
+openclaw --version
+openclaw doctor
+openclaw agents add studyclaw --workspace "$PWD\studyclaw-mini"
 openclaw agent --agent studyclaw --message "Giải thích khóa chính trong SQL Server bằng tiếng Việt dễ hiểu, kèm ví dụ."
 ```
 
-Nếu Gateway chưa chạy, kiểm tra:
+Chỉ chạy lệnh `agents add` một lần. Nếu agent đã tồn tại, xem `openclaw agents list` và không tạo lại. Nếu Gateway hoặc mô hình AI chưa được cấu hình, hãy chạy `openclaw onboard` hoặc `openclaw doctor` và làm theo hướng dẫn hiển thị.
 
-```powershell
-openclaw gateway status
-```
+## Ví dụ yêu cầu
 
-Hãy khởi động Gateway theo hướng dẫn dành cho bản OpenClaw đã cài trên máy. Nếu CLI báo lỗi, hãy đọc thông báo lỗi và kiểm tra cấu hình agent/model trước.
+**Tóm tắt tài liệu:**
+> Hãy tóm tắt nội dung sau thành ý chính, thuật ngữ quan trọng và phần cần ghi nhớ: [dán nội dung bài học]
 
-## Ví dụ sử dụng
-
-**Tóm tắt tài liệu**
-
-> Hãy tóm tắt tài liệu sau thành các ý chính, thuật ngữ quan trọng và phần cần ghi nhớ: [dán nội dung bài học]
-
-**Giải thích kiến thức**
-
+**Giải thích kiến thức:**
 > Giải thích sự khác nhau giữa khóa chính và khóa ngoại trong SQL Server cho người mới học. Cho ví dụ ngắn.
 
 ## Giới hạn demo
 
-- Chỉ tập trung vào hai nhiệm vụ học tập; không có giao diện web riêng, tài khoản hoặc lịch sử học.
-- Có thể dán văn bản trực tiếp vào tin nhắn. Khả năng đọc tệp phụ thuộc giao diện/kênh OpenClaw và công cụ được cấu hình.
+- Chỉ tập trung vào hai nhiệm vụ học tập; chưa có giao diện web riêng.
+- Có thể dán văn bản trực tiếp vào tin nhắn. Khả năng đọc tệp phụ thuộc công cụ/kênh đã cấu hình trong OpenClaw.
 - Nội dung trả lời phụ thuộc mô hình AI mà OpenClaw đang dùng.
-- Không gửi mật khẩu, khóa API hoặc thông tin nhạy cảm vào tài liệu học tập.
+- Không dán mật khẩu, khóa API hoặc thông tin nhạy cảm vào tài liệu học tập.
 
 ## Tài liệu tham khảo
 
 - OpenClaw: https://github.com/openclaw/openclaw
-- CLI Agents: https://docs.openclaw.ai/cli/agents
-- CLI Agent: https://docs.openclaw.ai/cli/agent
+- Cài đặt: https://docs.openclaw.ai/install
+- CLI agents: https://docs.openclaw.ai/cli/agents
